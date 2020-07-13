@@ -5,26 +5,14 @@
       <table>
         <thead>
           <tr>
-            <th>Class</th>
-            <th>HP Growth</th>
-            <th>MP Growth</th>
-            <th>ATK Growth</th>
-            <th>DEF Growth</th>
-            <th>MND Growth</th>
-            <th>RES Growth</th>
-            <th>SPD Growth</th>
-            <th>MV</th>
-            <th>Jump</th>
-            <th>Swim</th>
-            <th>Crit</th>
-            <th>Evasion</th>
-            <th>Weapons</th>
-            <th>Shields</th>
-            <th>Armor</th>
+            <th v-for="n in theadNames" :key="n.name">
+              {{n.name}}
+              <span v-if="n.sort" @click="setSortCol(n.sort)">^</span>
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(d, index) in tableData" :key="index">
+          <tr v-for="(d, index) in filteredData" :key="index">
             <td>{{d.class}}</td>
             <td>{{d.hp}}</td>
             <td>{{d.mp}}</td>
@@ -55,8 +43,28 @@ export default {
   name: "Index",
   data() {
     return {
+      theadNames: [
+        { name: "Class", sort: "class" },
+        { name: "HP Growth", sort: "hp" },
+        { name: "MP Growth", sort: "mp" },
+        { name: "ATK Growth", sort: "atk" },
+        { name: "DEF Growth", sort: "def" },
+        { name: "MND Growth", sort: "mnd" },
+        { name: "RES Growth", sort: "res" },
+        { name: "SPD Growth", sort: "spd" },
+        { name: "Move", sort: "mv" },
+        { name: "Jump", sort: "jump" },
+        { name: "Swim", sort: "swim" },
+        { name: "Crit", sort: "crit" },
+        { name: "Evasion", sort: "eva" },
+        { name: "Weapon", sort: null },
+        { name: "Shield", sort: "shield" },
+        { name: "Armor", sort: null }
+      ], //thead names
       tableData: data, //pure version of full data
-      filteredData: data //rendered subset of data
+      filteredData: data, //rendered subset of data
+      sortCol: null, // for header sorting, which col by default
+      sortASC: true // asc / desc
     };
   },
   methods: {
@@ -65,6 +73,20 @@ export default {
     },
     getArrayFormattedData(arr) {
       return arr.join(", ");
+    },
+    setSortCol(colname) {
+      this.sortCol = colname;
+      this.sortASC = !this.sortASC;
+      this.sortFilteredData();
+    },
+    sortFilteredData() {
+      this.filteredData.sort((a, b) => {
+        if (this.sortASC) {
+          return a[this.sortCol] > b[this.sortCol] ? 1 : -1;
+        } else {
+          return a[this.sortCol] > b[this.sortCol] ? -1 : 1;
+        }
+      });
     }
   }
 };

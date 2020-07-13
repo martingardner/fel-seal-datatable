@@ -1,3 +1,6 @@
+$gray: rgba(0, 0, 0, 0.1);
+$lightblue: rgba(0, 0, 255, 0.1);
+
 html {
   padding: 0;
   margin: 0;
@@ -6,17 +9,31 @@ html {
 
 body {
   font-size: 16px;
+  background-color: $gray;
 }
 
 table {
+  width: 100%;
+  border-spacing: 0px;
+
   thead {
     font-weight: 600;
+  }
+
+  tbody {
+    tr:nth-child(even) {
+      background-color: $gray;
+    }
+
+    tr:hover {
+      background-color: $lightblue;
+    }
   }
 
   td,
   th {
     font-size: 0.85rem;
-    padding: 3px 3px;
+    padding: 5px 5px;
     text-align: center;
   }
 }

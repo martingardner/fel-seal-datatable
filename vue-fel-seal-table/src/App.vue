@@ -6,7 +6,6 @@
 
 <script>
 import "./scss/_global.scss";
-import "./scss/_variables.scss";
 
 import Index from "./components/Index.vue";
 
