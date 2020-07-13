@@ -1,6 +1,13 @@
 <template>
   <div>
     <h1>Human Classes</h1>
+    <div v-if="filterCheckboxes" class="filter-checkboxes">
+      <h2>Class Filters</h2>
+      <div v-for="f in filterCheckboxes" :key="f.param">
+        <label>{{ f.name }}</label>
+        <input type="checkbox" :name="f.param" @click="setFilterCheckboxesParam(f.param, $event)" />
+      </div>
+    </div>
     <div v-if="filteredData">
       <table>
         <thead>
@@ -45,13 +52,13 @@ export default {
     return {
       theadNames: [
         { name: "Class", sort: "class" },
-        { name: "HP Growth", sort: "hp" },
-        { name: "MP Growth", sort: "mp" },
-        { name: "ATK Growth", sort: "atk" },
-        { name: "DEF Growth", sort: "def" },
-        { name: "MND Growth", sort: "mnd" },
-        { name: "RES Growth", sort: "res" },
-        { name: "SPD Growth", sort: "spd" },
+        { name: "HP+", sort: "hp" },
+        { name: "MP+", sort: "mp" },
+        { name: "ATK+", sort: "atk" },
+        { name: "DEF+", sort: "def" },
+        { name: "MND+", sort: "mnd" },
+        { name: "RES+", sort: "res" },
+        { name: "SPD+", sort: "spd" },
         { name: "Move", sort: "mv" },
         { name: "Jump", sort: "jump" },
         { name: "Swim", sort: "swim" },
@@ -64,7 +71,9 @@ export default {
       tableData: data, //pure version of full data
       filteredData: data, //rendered subset of data
       sortCol: null, // for header sorting, which col by default
-      sortASC: true // asc / desc
+      sortASC: true, // asc / desc
+      filterCheckboxes: [], // created based off of data
+      filterCheckboxesParam: [] //list of params checked in class filters
     };
   },
   methods: {
@@ -79,6 +88,27 @@ export default {
       this.sortASC = !this.sortASC;
       this.sortFilteredData();
     },
+    setFilterCheckboxesParam(param, event) {
+      if (event.target.checked && !this.filterCheckboxesContains(param)) {
+        this.filterCheckboxesParam.push(param);
+      } else {
+        this.removeFromFilterCheckbox(param);
+      }
+
+      this.filterDataFromFilterCheckboxes();
+    },
+    filterCheckboxesContains(param) {
+      return this.filterCheckboxesParam.includes(param);
+    },
+    removeFromFilterCheckbox(param) {
+      const newArr = this.filterCheckboxesParam.filter(f => {
+        if (param !== f) {
+          return f;
+        }
+      });
+
+      this.filterCheckboxesParam = newArr;
+    },
     sortFilteredData() {
       this.filteredData.sort((a, b) => {
         if (this.sortASC) {
@@ -87,7 +117,38 @@ export default {
           return a[this.sortCol] > b[this.sortCol] ? -1 : 1;
         }
       });
+    },
+    filterDataFromFilterCheckboxes() {
+      const newArr = this.tableData.filter(f => {
+        if (this.filterCheckboxesParam.includes(f.param)) {
+          return f;
+        }
+      });
+
+      console.log("newArr", newArr);
+      this.filterCheckboxesParam.length > 0
+        ? (this.filteredData = newArr)
+        : (this.filteredData = this.tableData);
+    },
+    returnFilterChecklistObj(data) {
+      return {
+        param: data.param,
+        name: data.class,
+        checked: false
+      };
+    },
+    createFilterChecklist() {
+      let tempArr = [];
+
+      this.tableData.forEach(data => {
+        tempArr.push(this.returnFilterChecklistObj(data));
+      });
+
+      this.filterCheckboxes = tempArr;
     }
+  },
+  created: function() {
+    this.createFilterChecklist();
   }
 };
 </script>
