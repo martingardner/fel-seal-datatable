@@ -35,12 +35,12 @@
             <td>{{d.spd}}</td>
             <td>{{d.mv}}</td>
             <td>{{d.jump}}</td>
-            <td>{{d.swim}}</td>
+            <td>{{ getBoolText(d.swim) }}</td>
             <td>{{d.crit}}</td>
             <td>{{d.eva}}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ getArrayFormattedData(d.wpn) }}</td>
+            <td>{{ getBoolText(d.shield) }}</td>
+            <td>{{ getArrayFormattedData(d.armor) }}</td>
           </tr>
         </tbody>
       </table>
@@ -59,7 +59,14 @@ export default {
       filteredData: data //rendered subset of data
     };
   },
-  methods: {}
+  methods: {
+    getBoolText(bool) {
+      return bool ? "Yes" : "No";
+    },
+    getArrayFormattedData(arr) {
+      return arr.join(", ");
+    }
+  }
 };
 </script>
 
